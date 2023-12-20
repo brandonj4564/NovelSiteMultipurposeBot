@@ -3,10 +3,10 @@ const cheerio = require('cheerio')
 const superagent = require('superagent').agent()
 const { EmbedBuilder } = require('discord.js')
 
-module.exports = async (newChapters, title, link, role, client) => {
+module.exports = async (newChapters, title, link, role, client, newReleasesChannel) => {
   try {
     // Function to scan for the new releases for a novel and then ping the role associated with that novel
-    const channel = await client.channels.cache.get(process.env.NEW_RELEASES_CHANNEL) // gets the new releases channel
+    const channel = await client.channels.cache.get(newReleasesChannel) // gets the new releases channel
     const novel = await superagent.get(link)
     let $ = cheerio.load(novel.text)
 

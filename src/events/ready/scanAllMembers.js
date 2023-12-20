@@ -1,18 +1,28 @@
 const { User, Translator, Author, Editor } = require('../../libs/database/models')
 const syncStaffNovelDB = require('../../libs/database/syncStaffNovelDB')
+const fs = require('fs');
+
 
 module.exports = async (client) => {
   if (process.env.FIRST_TIME_STARTUP === 'true') {
     try {
       // Scans all members in the server and, based on their roles, checks the DB for up to date information
-      const guild = await client.guilds.cache.get(process.env.GUILD_ID)
-      const members = await guild.members.fetch()
+      // const guild = await client.guilds.cache.get(process.env.GUILD_ID)
+      // const members = await guild.members.fetch()
 
-      const staffRole = process.env.STAFF_ROLE // Temp staff role, change to actual staff role when implemented
-      const translatorRole = process.env.TRANSLATOR_ROLE
-      const MTLTranslatorRole = process.env.MTLTRANSLATOR_ROLE
-      const editorRole = process.env.EDITOR_ROLE
-      const authorRole = process.env.AUTHOR_ROLE
+      // const staffRole = process.env.STAFF_ROLE // Temp staff role, change to actual staff role when implemented
+      // const translatorRole = process.env.TRANSLATOR_ROLE
+      // const MTLTranslatorRole = process.env.MTLTRANSLATOR_ROLE
+      // const editorRole = process.env.EDITOR_ROLE
+      // const authorRole = process.env.AUTHOR_ROLE
+
+      const luminaryData = JSON.parse(fs.readFileSync('../../handlers/serverFiles/luminary.json')) // This actually doesn't work but I don't want to delete it yet just in case, fix if needed
+      const guild = await client.guilds.cache.get(luminaryData.GUILD_ID)
+      const members = await guild.members.fetch()
+      const staffRole = luminaryData.STAFF_ROLE
+      const translatorRole = luminaryData.TRANSLATOR_ROLE
+      const editorRole = luminaryData.EDITOR_ROLE
+      const authorRole = luminaryData.AUTHOR_ROLE
 
       // const members = await guild.roles.cache.get(staffRole).members
 

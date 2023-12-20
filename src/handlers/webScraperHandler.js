@@ -5,8 +5,6 @@ module.exports = async (client) => {
   const scrapers = getWebScrapers()
 
   for (const s of scrapers) {
-    const allNovelInfo = await s.run()
-    await updateNovelDatabase(allNovelInfo, client)
+    await s.run(client)
   }
-  // that's it lol
 }

@@ -1,6 +1,7 @@
 require('dotenv').config() // Gives me access to my .env file
 const endlessMonitor = require('./endlessMonitor.js')
 const eventHandler = require('./handlers/eventHandler.js')
+const monitorHandler = require('./handlers/monitorHandler.js')
 const getLocalCommands = require('./utils/getLocalCommands.js')
 
 const {
@@ -157,8 +158,5 @@ const status = [
 //     console.log(error)
 //   }
 // })
-
 eventHandler(client) // Handle all events
-endlessMonitor(client)
-
 client.login(process.env.TOKEN)

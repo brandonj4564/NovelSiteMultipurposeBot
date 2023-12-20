@@ -3,7 +3,7 @@ const syncStaffNovelDB = require('./syncStaffNovelDB')
 const notifyNewChapters = require('./notifyNewChapters')
 const { notify } = require('superagent')
 
-module.exports = async (novelInfo, client) => {
+module.exports = async (novelInfo, client, newReleasesChannel) => {
   // novelInfo is an array of objects with information about all novels on the site
   // Updates the whole novel db
 
@@ -45,7 +45,7 @@ module.exports = async (novelInfo, client) => {
         const role = dbNovel.role
 
         if (newChapters > 0) {
-          notifyNewChapters(newChapters, title, link, role, client) // ensure it is a positive increase in chapters
+          notifyNewChapters(newChapters, title, link, role, client, newReleasesChannel) // ensure it is a positive increase in chapters
           await dbNovel.update({ // If the novel was previously marked as "dropped", then it will be set to "ongoing"
             status: 'Ongoing',
           })

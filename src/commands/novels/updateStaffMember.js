@@ -100,8 +100,8 @@ module.exports = {
     })
 
     await syncStaffNovelDB(client)
-    const memberName = (await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(member)).nickname
+    // const memberName = (await client.guilds.cache.get(process.env.GUILD_ID).members.fetch(member)).nickname
 
-    interaction.editReply(`Updated user '${memberName}'.`)
+    interaction.editReply(`Updated user '${member}'.`)
   },
 }

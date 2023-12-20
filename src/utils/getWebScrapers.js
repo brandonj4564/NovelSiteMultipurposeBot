@@ -4,7 +4,7 @@ const getAllFiles = require('./getAllFiles')
 module.exports = (exceptions = []) => {
   let webScrapers = []
 
-  const scrapers = getAllFiles(path.join(__dirname, '..', 'webscrapers'))
+  const scrapers = getAllFiles(path.join(__dirname, '../handlers/serverFiles', 'webscrapers'))
 
   for (const scraper of scrapers) {
     const scraperObject = require(scraper)
