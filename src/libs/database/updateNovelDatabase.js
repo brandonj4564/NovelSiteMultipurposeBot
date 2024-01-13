@@ -1,5 +1,5 @@
 const { Novel, User } = require('./models')
-const syncStaffNovelDB = require('./syncStaffNovelDB')
+const syncStaffNovelDB = require('../../handlers/syncStaffNovelDB')
 const notifyNewChapters = require('./notifyNewChapters')
 const { notify } = require('superagent')
 

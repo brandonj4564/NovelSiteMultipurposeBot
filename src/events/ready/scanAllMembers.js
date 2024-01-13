@@ -1,5 +1,5 @@
 const { User, Translator, Author, Editor } = require('../../libs/database/models')
-const syncStaffNovelDB = require('../../libs/database/syncStaffNovelDB')
+const syncStaffNovelDB = require('../../handlers/syncStaffNovelDB')
 const fs = require('fs');
 
 

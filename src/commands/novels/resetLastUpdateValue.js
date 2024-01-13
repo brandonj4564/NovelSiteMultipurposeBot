@@ -1,6 +1,6 @@
 const { User } = require('../../libs/database/models')
 const { Client, Interaction } = require('discord.js')
-const syncStaffNovelDB = require('../../libs/database/syncStaffNovelDB')
+const syncStaffNovelDB = require('../../handlers/syncStaffNovelDB')
 
 module.exports = {
     name: 'reset-last-update',

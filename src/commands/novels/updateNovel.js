@@ -1,6 +1,6 @@
 const { Novel } = require('../../libs/database/models')
 const { ApplicationCommandOptionType, Client, Interaction, PermissionFlagsBits } = require('discord.js')
-const syncStaffNovelDB = require('../../libs/database/syncStaffNovelDB')
+const syncStaffNovelDB = require('../../handlers/syncStaffNovelDB')
 
 module.exports = {
   name: 'update-novel',

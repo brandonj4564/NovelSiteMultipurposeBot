@@ -1,15 +1,17 @@
-const { Novel, User, Translator, Author, Editor } = require('./models')
+const { Novel, User, Translator, Author, Editor } = require('../libs/database/models')
+const getAllFiles = require('../utils/getAllFiles')
+const fs = require('fs');
+const path = require('path');
 
-module.exports = async (client) => {
+const syncStaffServerNovelDB = async (client, data) => {
   // Synchronizes data such as numChapterReleases between all the DBs. The translators and editors associated with each novel will calculate their numChaptersReleased and numProjects based on the novel DB.
-  const guild = await client.guilds.cache.get(process.env.GUILD_ID)
+  const guild = await client.guilds.cache.get(data.GUILD_ID)
   const members = await guild.members.fetch()
-
-  const staffRole = process.env.STAFF_ROLE // Temp staff role, change to actual staff role when implemented
-  const translatorRole = process.env.TRANSLATOR_ROLE
-  const MTLTranslatorRole = process.env.MTLTRANSLATOR_ROLE
-  const editorRole = process.env.EDITOR_ROLE
-  const authorRole = process.env.AUTHOR_ROLE
+  const staffRole = data.STAFF_ROLE
+  const translatorRole = data.TRANSLATOR_ROLE
+  const MTLTranslatorRole = data.MTLTRANSLATOR_ROLE
+  const editorRole = data.EDITOR_ROLE
+  const authorRole = data.AUTHOR_ROLE
 
   for (const member of members) {
     if (member[1].roles.cache.has(staffRole)) {
@@ -133,5 +135,17 @@ module.exports = async (client) => {
         dateLastRelease: dateLastRelease,
       })
     }
+  }
+}
+
+module.exports = async (client) => {
+  const files = fs.readdirSync(path.join(__dirname, '.', 'serverFiles', 'serverInfo'), { withFileTypes: true })
+
+  for (const file of files) {
+    const filePath = path.join(__dirname, ".", "serverFiles", "serverInfo", file.name);
+    const data = fs.readFileSync(filePath, 'utf-8')
+    const serverData = await JSON.parse(data)
+
+    await syncStaffServerNovelDB(client, serverData)
   }
 }
