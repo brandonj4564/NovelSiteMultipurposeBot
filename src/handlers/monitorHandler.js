@@ -15,8 +15,8 @@ const activateMonitors = async (client) => {
 }
 
 module.exports = async (client) => {
-    await activateMonitors(client)
+    // await activateMonitors(client)
 
-    const interval = setInterval(activateMonitors, 1800000 / 2, client) // 30 / 2 minutes timer
+    const interval = setInterval(activateMonitors, 1800000, client) // 30 minutes timer
     // const interval = setInterval(activateMonitors, 100, client, monitors) // 30 / 2 minutes timer
 }

@@ -65,7 +65,7 @@ module.exports = {
           editor = e.discordUsername
         }
 
-        const row = [n.novelId, n.novelTitle.length > 50 ? n.novelTitle.substring(0, 47) + "..." : n.novelTitle, n.numChaptersReleased, n.translatorUsername, user ? user.discordUsername : "Unknown", n.editor ? editor : "N/A", n.status, n.lastUpdated, n.original ? "Original" : "Not Original", n.role ? "Yes" : "No"]
+        const row = [n.novelId, n.novelTitle.length > 35 ? n.novelTitle.substring(0, 32) + "..." : n.novelTitle, n.numChaptersReleased, n.translatorUsername, user ? user.discordUsername : "Unknown", n.editor ? editor : "N/A", n.status, n.lastUpdated, n.original ? "Original" : "Not Original", n.role ? "Yes" : "No"]
         reply.push(row)
       }
     } else if (database === 'Authors') {
@@ -106,10 +106,10 @@ module.exports = {
 
     if (dataTable.length > 2000) {
       // scuffed lol
-      const endRowIndex = dataTable.substring(1600).indexOf('║') + 1600
+      const endRowIndex = dataTable.substring(1600).indexOf('║') + 1601
       interaction.editReply("```" + dataTable.substring(0, endRowIndex) + "```")
       for (let i = 1; i < dataTable.length / endRowIndex; i++) {
-        channel.send("```" + dataTable.substring(i * endRowIndex, (i + 1) * endRowIndex) + "```")
+        channel.send("```" + dataTable.substring(i * endRowIndex + i, (i + 1) * endRowIndex + i) + "```")
       }
     } else {
       interaction.editReply("```" + dataTable + "```")
