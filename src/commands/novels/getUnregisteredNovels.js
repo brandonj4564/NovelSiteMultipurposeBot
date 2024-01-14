@@ -38,8 +38,11 @@ module.exports = {
     let dataTable = table(reply) + ""
 
     if (dataTable.length > 1994) {
-      // scuffed lol
-      const endRowIndex = dataTable.substring(1600).indexOf('║') + 1600
+      const rowLength = dataTable.indexOf('║')
+      let endRowIndex = rowLength
+      while (endRowIndex < 1800) {
+        endRowIndex += rowLength
+      }
       interaction.editReply("```" + dataTable.substring(0, endRowIndex) + "```")
       for (let i = 1; i < dataTable.length / endRowIndex; i++) {
         channel.send("```" + dataTable.substring(i * endRowIndex, (i + 1) * endRowIndex) + "```")

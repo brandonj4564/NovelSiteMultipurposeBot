@@ -106,10 +106,14 @@ module.exports = {
 
     if (dataTable.length > 2000) {
       // scuffed lol
-      const endRowIndex = dataTable.substring(1600).indexOf('║') + 1601
+      const rowLength = dataTable.indexOf('║')
+      let endRowIndex = rowLength
+      while (endRowIndex < 1800) {
+        endRowIndex += rowLength
+      }
       interaction.editReply("```" + dataTable.substring(0, endRowIndex) + "```")
       for (let i = 1; i < dataTable.length / endRowIndex; i++) {
-        channel.send("```" + dataTable.substring(i * endRowIndex + i, (i + 1) * endRowIndex + i) + "```")
+        channel.send("```" + dataTable.substring(i * endRowIndex, (i + 1) * endRowIndex) + "```")
       }
     } else {
       interaction.editReply("```" + dataTable + "```")

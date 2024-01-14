@@ -45,8 +45,12 @@ module.exports = {
     let inactiveTable = table(reply) + ""
 
     if (inactiveTable.length > 2000) {
-      // scuffed lol
-      const endRowIndex = inactiveTable.substring(1600).indexOf('║') + 1600
+      // scuffed and fickle printing scheme
+      const rowLength = inactiveTable.indexOf('║')
+      let endRowIndex = rowLength
+      while (endRowIndex < 1800) {
+        endRowIndex += rowLength
+      }
       interaction.editReply("```" + inactiveTable.substring(0, endRowIndex) + "```")
       for (let i = 1; i < inactiveTable.length / endRowIndex; i++) {
         channel.send("```" + inactiveTable.substring(i * endRowIndex, (i + 1) * endRowIndex) + "```")
