@@ -34,24 +34,29 @@ module.exports = {
             interaction.editReply("That's not a valid staff member.")
         }
 
-        let novels = await Novel.findAll({ where: { translatorId: user } })
-        let message = "```Associated novels: \n";
+        let novels = await Novel.findAll({ where: { translatorId: user }, order: [['status', 'DESC'], ['novelId', 'ASC']] })
+
+        let message = [['ID', 'Title', 'Chps', 'Updated', 'Original', 'Status']];
 
         for (const n of novels) {
-
-            if (n.novelTitle.length > 50) {
-                message += 'ID: ' + n.novelId + ' | Title: ' + n.novelTitle.substring(0, 47) + '...\n'
-            }
-            else {
-                message += 'ID: ' + n.novelId + ' | Title: ' + n.novelTitle + '\n'
-            }
-
+            const row = [n.novelId, n.novelTitle.length > 35 ? n.novelTitle.substring(0, 32) + "..." : n.novelTitle, n.numChaptersReleased, n.lastUpdated, n.original ? "Original" : "Not Orig", n.status]
+            message.push(row)
         }
-        if (novels.length == 0) {
-            message += 'None'
-        }
-        message += "```"
 
-        interaction.editReply(message)
+        let dataTable = table(message) + ""
+
+        if (dataTable.length > 2000) {
+            const rowLength = dataTable.indexOf('║')
+            let endRowIndex = rowLength
+            while (endRowIndex < 1800) {
+                endRowIndex += rowLength
+            }
+            interaction.editReply("```" + dataTable.substring(0, endRowIndex) + "```")
+            for (let i = 1; i < dataTable.length / endRowIndex; i++) {
+                channel.send("```" + dataTable.substring(i * endRowIndex, (i + 1) * endRowIndex) + "```")
+            }
+        } else {
+            interaction.editReply("```" + dataTable + "```")
+        }
     },
 }

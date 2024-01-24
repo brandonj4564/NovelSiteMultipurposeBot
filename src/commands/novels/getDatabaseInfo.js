@@ -56,7 +56,7 @@ module.exports = {
     if (database === 'Novels') {
       const allNovels = await Novel.findAll({ order: [['status', 'DESC'], ['novelId', 'ASC']] })
 
-      reply.push(['ID', 'Title', 'Chapters', 'Translator', 'Discord Tag', 'Editor', 'Status', 'Updated', 'Original', 'Role'])
+      reply.push(['ID', 'Title', 'Chps', 'Translator', 'Discord Tag', 'Editor', 'Status', 'Updated', 'Original', 'Role'])
       for (const n of allNovels) {
         const user = await User.findOne({ where: { discordSnowflake: n.translatorId } })
         let editor;
@@ -65,7 +65,7 @@ module.exports = {
           editor = e.discordUsername
         }
 
-        const row = [n.novelId, n.novelTitle.length > 35 ? n.novelTitle.substring(0, 32) + "..." : n.novelTitle, n.numChaptersReleased, n.translatorUsername, user ? user.discordUsername : "Unknown", n.editor ? editor : "N/A", n.status, n.lastUpdated, n.original ? "Original" : "Not Original", n.role ? "Yes" : "No"]
+        const row = [n.novelId, n.novelTitle.length > 25 ? n.novelTitle.substring(0, 23) + "..." : n.novelTitle, n.numChaptersReleased, n.translatorUsername, user ? user.discordUsername : "Unknown", n.editor ? editor : "N/A", n.status, n.lastUpdated, n.original ? "Original" : "Not Orig", n.role ? "Yes" : "No"]
         reply.push(row)
       }
     } else if (database === 'Authors') {

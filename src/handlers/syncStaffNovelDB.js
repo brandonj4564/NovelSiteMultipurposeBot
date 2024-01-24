@@ -81,6 +81,7 @@ const syncStaffServerNovelDB = async (client, data) => {
         for (const n of novels) {
           totalChapters += n.numChaptersReleased
           totalProjects++
+          translatorUsername = n.translatorUsername
 
           if (!dateLastRelease) {
             dateLastRelease = n.lastUpdated
@@ -114,6 +115,7 @@ const syncStaffServerNovelDB = async (client, data) => {
         for (const n of novels) {
           totalChapters += n.numChaptersReleased
           totalProjects++
+          translatorUsername = n.translatorUsername
 
           if (!dateLastRelease) {
             dateLastRelease = n.lastUpdated
