@@ -1,6 +1,7 @@
 const getMonitors = require('../utils/getMonitors')
 const webScraperHandler = require('./webScraperHandler')
-const { User } = require('../libs/database/models')
+const { User, Novel } = require('../libs/database/models')
+const getDroppedNovels = require('../utils/getDroppedNovels')
 
 const activateMonitors = async (client) => {
     try {
@@ -21,6 +22,46 @@ const activateMonitors = async (client) => {
             const user = await User.findOne({ where: { discordSnowflake: snowflake } })
             if (user) {
                 user.update({ retired: true })
+                let novels = await Novel.findAll({ where: { translatorId: snowflake } })
+
+                for (const n of novels) {
+                    if (n.status === "Ongoing") {
+                        await n.update({
+                            status: "Dropped"
+                        })
+                    }
+                }
+            }
+        }
+
+        const allStaff = await User.findAll()
+        const channel = await client.channels.cache.get('1154633704442953728') // Bot testing channel in Luminary Discord
+        for (const a of allStaff) {
+            if (!a.retired) {
+                if (a.dateLastRelease && (new Date()) - new Date(a.dateLastRelease) > 2629800000 * 3) {
+                    // Last updated over three months ago
+                    // await a.update({
+                    //     retired: true
+                    // })
+                    const dataTable = await getDroppedNovels(a, true)
+
+                    if (channel) {
+                        await channel.send(`**${a.discordUsername}** has been inactive for more than 3 months, automatically retired. <@327670614351413270>, please remove their staff roles.`)
+                        if (dataTable.length > 2000) {
+                            const rowLength = dataTable.indexOf('║')
+                            let endRowIndex = rowLength
+                            while (endRowIndex < 1800) {
+                                endRowIndex += rowLength
+                            }
+                            interaction.editReply("```" + dataTable.substring(0, endRowIndex) + "```")
+                            for (let i = 1; i < dataTable.length / endRowIndex; i++) {
+                                channel.send("```" + dataTable.substring(i * endRowIndex, (i + 1) * endRowIndex) + "```")
+                            }
+                        } else {
+                            channel.send("```" + dataTable + "```")
+                        }
+                    }
+                }
             }
         }
 

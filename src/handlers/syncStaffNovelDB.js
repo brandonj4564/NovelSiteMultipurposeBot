@@ -20,6 +20,11 @@ const syncStaffServerNovelDB = async (client, data) => {
       let user = await User.findOne({ where: { discordSnowflake: snowflake } })
       let translatorUsername = null
 
+      let associatedNovels = await Novel.findAll({ where: { translatorId: snowflake } })
+      for (const n of associatedNovels) {
+        translatorUsername = n.translatorUsername // Automatically links the website username associated with the novel to the discord profile associated with the discord snowflake
+      }
+
       if (!user) {
         user = await new User({
           discordSnowflake: snowflake,
@@ -47,7 +52,6 @@ const syncStaffServerNovelDB = async (client, data) => {
         for (const n of novels) {
           totalChapters += n.numChaptersReleased
           totalProjects++
-          translatorUsername = n.translatorUsername // Automatically links the website username associated with the novel to the discord profile associated with the discord snowflake
 
           if (!dateLastRelease) {
             dateLastRelease = n.lastUpdated
@@ -81,7 +85,6 @@ const syncStaffServerNovelDB = async (client, data) => {
         for (const n of novels) {
           totalChapters += n.numChaptersReleased
           totalProjects++
-          translatorUsername = n.translatorUsername
 
           if (!dateLastRelease) {
             dateLastRelease = n.lastUpdated
@@ -115,7 +118,6 @@ const syncStaffServerNovelDB = async (client, data) => {
         for (const n of novels) {
           totalChapters += n.numChaptersReleased
           totalProjects++
-          translatorUsername = n.translatorUsername
 
           if (!dateLastRelease) {
             dateLastRelease = n.lastUpdated

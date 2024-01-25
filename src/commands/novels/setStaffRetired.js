@@ -1,6 +1,7 @@
 const { User, Novel } = require('../../libs/database/models')
 const { ApplicationCommandOptionType, Client, Interaction } = require('discord.js')
 const { table } = require('table')
+const getDroppedNovels = require('../../utils/getDroppedNovels')
 
 module.exports = {
     name: 'set-retired',
@@ -32,14 +33,6 @@ module.exports = {
         const channel = interaction.channel
         await interaction.deferReply();
 
-        // const user = interaction.options.get('user').value
-        // let staff = await User.findOne({ where: { discordSnowflake: user } })
-
-        // if (!staff) {
-        //     interaction.editReply("That's not a valid staff member.")
-        // }
-        // await staff.update({ retired: true })
-
         const user = interaction.options.get('user')?.value || null
         const name = interaction.options.get('user-name')?.value || null
 
@@ -64,28 +57,24 @@ module.exports = {
         }
         await staff.update({ retired: true })
 
-        let novels = await Novel.findAll({ where: { translatorId: staff.discordSnowflake } })
-        let message = "```Dropped novels: \n";
+        // Actually, don't set novels where the staff member is just the editor as "Dropped",
+        // maybe they got a new editor?
+        // let novels = await Novel.findAll({ where: { [Op.or]: [{ translatorId: staff.discordSnowflake }, { editor: staff.discordSnowflake }] } })
 
-        for (const n of novels) {
-            if (n.status === "Ongoing") {
-                await n.update({
-                    status: "Dropped"
-                })
+        const dataTable = await getDroppedNovels(staff, true)
 
-                if (n.novelTitle.length > 50) {
-                    message += 'ID: ' + n.novelId + ' | Title: ' + n.novelTitle.substring(0, 47) + '...\n'
-                }
-                else {
-                    message += 'ID: ' + n.novelId + ' | Title: ' + n.novelTitle + '\n'
-                }
+        if (dataTable.length > 2000) {
+            const rowLength = dataTable.indexOf('║')
+            let endRowIndex = rowLength
+            while (endRowIndex < 1800) {
+                endRowIndex += rowLength
             }
+            interaction.editReply("```" + dataTable.substring(0, endRowIndex) + "```")
+            for (let i = 1; i < dataTable.length / endRowIndex; i++) {
+                channel.send("```" + dataTable.substring(i * endRowIndex, (i + 1) * endRowIndex) + "```")
+            }
+        } else {
+            interaction.editReply("```" + dataTable + "```")
         }
-        if (novels.length == 0) {
-            message += 'None'
-        }
-        message += "```"
-
-        interaction.editReply(message)
     },
 }

@@ -1,6 +1,8 @@
 const { User, Novel } = require('../../libs/database/models')
 const { ApplicationCommandOptionType, Client, Interaction } = require('discord.js')
 const { table } = require('table')
+const { Op } = require('sequelize')
+const getDroppedNovels = require('../../utils/getDroppedNovels')
 
 module.exports = {
     name: 'get-associated-novels',
@@ -34,16 +36,16 @@ module.exports = {
             interaction.editReply("That's not a valid staff member.")
         }
 
-        let novels = await Novel.findAll({ where: { translatorId: user }, order: [['status', 'DESC'], ['novelId', 'ASC']] })
+        // let novels = await Novel.findAll({ where: { [Op.or]: [{ translatorId: user }, { editor: user }] }, order: [['status', 'DESC'], ['novelId', 'ASC']] })
 
-        let message = [['ID', 'Title', 'Chps', 'Updated', 'Original', 'Status']];
+        // let message = [['ID', 'Title', 'Chps', 'Updated', 'Original', 'Status']];
 
-        for (const n of novels) {
-            const row = [n.novelId, n.novelTitle.length > 35 ? n.novelTitle.substring(0, 32) + "..." : n.novelTitle, n.numChaptersReleased, n.lastUpdated, n.original ? "Original" : "Not Orig", n.status]
-            message.push(row)
-        }
+        // for (const n of novels) {
+        //     const row = [n.novelId, n.novelTitle.length > 35 ? n.novelTitle.substring(0, 32) + "..." : n.novelTitle, n.numChaptersReleased, n.lastUpdated, n.original ? "Original" : "Not Orig", n.status]
+        //     message.push(row)
+        // }
 
-        let dataTable = table(message) + ""
+        let dataTable = await getDroppedNovels(staff, false)
 
         if (dataTable.length > 2000) {
             const rowLength = dataTable.indexOf('║')
