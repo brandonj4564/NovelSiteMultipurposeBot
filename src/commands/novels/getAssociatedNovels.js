@@ -2,7 +2,8 @@ const { User, Novel } = require('../../libs/database/models')
 const { ApplicationCommandOptionType, Client, Interaction } = require('discord.js')
 const { table } = require('table')
 const { Op } = require('sequelize')
-const getDroppedNovels = require('../../utils/getDroppedNovels')
+const getUserNovels = require('../../utils/getUserNovels')
+const sendTableMessage = require('../../utils/sendTableMessage')
 
 module.exports = {
     name: 'get-associated-novels',
@@ -45,20 +46,7 @@ module.exports = {
         //     message.push(row)
         // }
 
-        let dataTable = await getDroppedNovels(staff, false)
-
-        if (dataTable.length > 2000) {
-            const rowLength = dataTable.indexOf('║')
-            let endRowIndex = rowLength
-            while (endRowIndex < 1800) {
-                endRowIndex += rowLength
-            }
-            interaction.editReply("```" + dataTable.substring(0, endRowIndex) + "```")
-            for (let i = 1; i < dataTable.length / endRowIndex; i++) {
-                channel.send("```" + dataTable.substring(i * endRowIndex, (i + 1) * endRowIndex) + "```")
-            }
-        } else {
-            interaction.editReply("```" + dataTable + "```")
-        }
+        let dataTable = await getUserNovels(staff, false)
+        sendTableMessage(dataTable, channel, interaction)
     },
 }

@@ -1,6 +1,7 @@
 const { Novel, Author, Editor, Translator, User } = require('../../libs/database/models')
 const { ApplicationCommandOptionType, Client, Interaction, EmbedBuilder, PermissionFlagsBits } = require('discord.js')
 const { table } = require('table')
+const sendTableMessage = require('../../utils/sendTableMessage')
 
 module.exports = {
   name: 'get-database-info',
@@ -103,20 +104,6 @@ module.exports = {
     }
 
     let dataTable = table(reply) + ""
-
-    if (dataTable.length > 2000) {
-      // scuffed lol
-      const rowLength = dataTable.indexOf('║')
-      let endRowIndex = rowLength
-      while (endRowIndex < 1800) {
-        endRowIndex += rowLength
-      }
-      interaction.editReply("```" + dataTable.substring(0, endRowIndex) + "```")
-      for (let i = 1; i < dataTable.length / endRowIndex; i++) {
-        channel.send("```" + dataTable.substring(i * endRowIndex, (i + 1) * endRowIndex) + "```")
-      }
-    } else {
-      interaction.editReply("```" + dataTable + "```")
-    }
+    sendTableMessage(dataTable, channel, interaction)
   },
 }

@@ -1,7 +1,8 @@
 const { User, Novel } = require('../../libs/database/models')
 const { ApplicationCommandOptionType, Client, Interaction } = require('discord.js')
 const { table } = require('table')
-const getDroppedNovels = require('../../utils/getDroppedNovels')
+const getUserNovels = require('../../utils/getUserNovels')
+const sendTableMessage = require('../../utils/sendTableMessage')
 
 module.exports = {
     name: 'set-retired',
@@ -61,20 +62,7 @@ module.exports = {
         // maybe they got a new editor?
         // let novels = await Novel.findAll({ where: { [Op.or]: [{ translatorId: staff.discordSnowflake }, { editor: staff.discordSnowflake }] } })
 
-        const dataTable = await getDroppedNovels(staff, true)
-
-        if (dataTable.length > 2000) {
-            const rowLength = dataTable.indexOf('║')
-            let endRowIndex = rowLength
-            while (endRowIndex < 1800) {
-                endRowIndex += rowLength
-            }
-            interaction.editReply("```" + dataTable.substring(0, endRowIndex) + "```")
-            for (let i = 1; i < dataTable.length / endRowIndex; i++) {
-                channel.send("```" + dataTable.substring(i * endRowIndex, (i + 1) * endRowIndex) + "```")
-            }
-        } else {
-            interaction.editReply("```" + dataTable + "```")
-        }
+        const dataTable = await getUserNovels(staff, true)
+        sendTableMessage(dataTable, channel, interaction)
     },
 }

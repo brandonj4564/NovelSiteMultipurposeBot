@@ -1,6 +1,7 @@
 const { User } = require('../../libs/database/models')
 const { ApplicationCommandOptionType, Client, Interaction } = require('discord.js')
 const { table } = require('table')
+const sendTableMessage = require('../../utils/sendTableMessage')
 
 module.exports = {
   name: 'inactive',
@@ -28,10 +29,11 @@ module.exports = {
     for (const a of allStaff) {
       if (!a.retired) {
         if (!a.websiteUsername || !a.dateLastRelease) {
-          const row = ['REGISTER', a.discordUsername, a.websiteUsername, a.dateLastRelease]
+          // const row = ['REGISTER', a.discordUsername, a.websiteUsername, a.dateLastRelease]
+          const row = ['REGISTER', a['discordUsername'], a['websiteUsername'], a['dateLastRelease']]
           reply.push(row)
         } else if (a.hiatus) {
-          const row = ['HIATUS', a.discordUsername, a.websiteUsername, a.dateLastRelease]
+          const row = ['HIATUS', a['discordUsername'], a['websiteUsername'], a['dateLastRelease']]
           reply.push(row)
         }
         else if (a.dateLastRelease && (new Date()) - new Date(a.dateLastRelease) > 2629800000) {
@@ -43,20 +45,6 @@ module.exports = {
     }
 
     let inactiveTable = table(reply) + ""
-
-    if (inactiveTable.length > 2000) {
-      // scuffed and fickle printing scheme
-      const rowLength = inactiveTable.indexOf('║')
-      let endRowIndex = rowLength
-      while (endRowIndex < 1800) {
-        endRowIndex += rowLength
-      }
-      interaction.editReply("```" + inactiveTable.substring(0, endRowIndex) + "```")
-      for (let i = 1; i < inactiveTable.length / endRowIndex; i++) {
-        channel.send("```" + inactiveTable.substring(i * endRowIndex, (i + 1) * endRowIndex) + "```")
-      }
-    } else {
-      interaction.editReply("```" + inactiveTable + "```")
-    }
+    sendTableMessage(inactiveTable, channel, interaction)
   },
 }

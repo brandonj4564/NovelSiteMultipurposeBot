@@ -17,9 +17,9 @@ module.exports = async (user, drop = false) => {
     for (const n of novels) {
         if (drop) {
             if (n.status === "Ongoing" || n.status === "Hiatus") {
-                // await n.update({
-                //     status: "Dropped"
-                // })
+                await n.update({
+                    status: "Dropped"
+                })
                 const row = [n.novelId, n.novelTitle.length > 35 ? n.novelTitle.substring(0, 32) + "..." : n.novelTitle, n.numChaptersReleased, n.lastUpdated, n.original ? "Original" : "Not Orig", n.status]
                 message.push(row)
             }

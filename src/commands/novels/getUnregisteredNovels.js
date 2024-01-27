@@ -2,6 +2,7 @@ const { Novel } = require('../../libs/database/models')
 const { ApplicationCommandOptionType, Client, Interaction, PermissionFlagsBits } = require('discord.js')
 const syncStaffNovelDB = require('../../handlers/syncStaffNovelDB')
 const { table } = require('table')
+const sendTableMessage = require('../../utils/sendTableMessage')
 
 module.exports = {
   name: 'unregistered-novels',
@@ -24,8 +25,6 @@ module.exports = {
     const allNovels = await Novel.findAll()
 
     let reply = []
-    let message = ''
-    let i = 0
 
     reply.push(['ID', 'Title', 'Translator', 'Original'])
     for (const n of allNovels) {
@@ -36,19 +35,6 @@ module.exports = {
     }
 
     let dataTable = table(reply) + ""
-
-    if (dataTable.length > 1994) {
-      const rowLength = dataTable.indexOf('║')
-      let endRowIndex = rowLength
-      while (endRowIndex < 1800) {
-        endRowIndex += rowLength
-      }
-      interaction.editReply("```" + dataTable.substring(0, endRowIndex) + "```")
-      for (let i = 1; i < dataTable.length / endRowIndex; i++) {
-        channel.send("```" + dataTable.substring(i * endRowIndex, (i + 1) * endRowIndex) + "```")
-      }
-    } else {
-      interaction.editReply("```" + dataTable + "```")
-    }
+    sendTableMessage(dataTable, channel, interaction)
   },
 }

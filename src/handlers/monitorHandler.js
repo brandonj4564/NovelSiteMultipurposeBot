@@ -1,7 +1,8 @@
 const getMonitors = require('../utils/getMonitors')
 const webScraperHandler = require('./webScraperHandler')
 const { User, Novel } = require('../libs/database/models')
-const getDroppedNovels = require('../utils/getDroppedNovels')
+const getUserNovels = require('../utils/getUserNovels')
+const sendTableMessage = require('../utils/sendTableMessage')
 
 const activateMonitors = async (client) => {
     try {
@@ -40,26 +41,14 @@ const activateMonitors = async (client) => {
             if (!a.retired) {
                 if (a.dateLastRelease && (new Date()) - new Date(a.dateLastRelease) > 2629800000 * 3) {
                     // Last updated over three months ago
-                    // await a.update({
-                    //     retired: true
-                    // })
-                    const dataTable = await getDroppedNovels(a, true)
+                    await a.update({
+                        retired: true
+                    })
+                    const dataTable = await getUserNovels(a, true)
 
                     if (channel) {
                         await channel.send(`**${a.discordUsername}** has been inactive for more than 3 months, automatically retired. <@327670614351413270>, please remove their staff roles.`)
-                        if (dataTable.length > 2000) {
-                            const rowLength = dataTable.indexOf('║')
-                            let endRowIndex = rowLength
-                            while (endRowIndex < 1800) {
-                                endRowIndex += rowLength
-                            }
-                            interaction.editReply("```" + dataTable.substring(0, endRowIndex) + "```")
-                            for (let i = 1; i < dataTable.length / endRowIndex; i++) {
-                                channel.send("```" + dataTable.substring(i * endRowIndex, (i + 1) * endRowIndex) + "```")
-                            }
-                        } else {
-                            channel.send("```" + dataTable + "```")
-                        }
+                        sendTableMessage(dataTable, channel)
                     }
                 }
             }
@@ -73,7 +62,7 @@ const activateMonitors = async (client) => {
 }
 
 module.exports = async (client) => {
-    await activateMonitors(client)
+    // await activateMonitors(client)
 
     const interval = setInterval(activateMonitors, 1800000, client) // 30 minutes timer
     // const interval = setInterval(activateMonitors, 100, client, monitors) // 30 / 2 minutes timer
