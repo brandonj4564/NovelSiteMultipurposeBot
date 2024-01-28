@@ -65,6 +65,14 @@ Novel.init(
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    views: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    revenue: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     paranoid: true,

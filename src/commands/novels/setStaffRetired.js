@@ -56,7 +56,7 @@ module.exports = {
             interaction.editReply('I could not find that staff member in the database.')
             return
         }
-        await staff.update({ retired: true })
+        await staff.update({ retired: true, dateRetired: new Date(), })
 
         // Actually, don't set novels where the staff member is just the editor as "Dropped",
         // maybe they got a new editor?

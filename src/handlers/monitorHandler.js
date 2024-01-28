@@ -42,7 +42,8 @@ const activateMonitors = async (client) => {
                 if (a.dateLastRelease && (new Date()) - new Date(a.dateLastRelease) > 2629800000 * 3) {
                     // Last updated over three months ago
                     await a.update({
-                        retired: true
+                        retired: true,
+                        dateRetired: new Date(),
                     })
                     const dataTable = await getUserNovels(a, true)
 

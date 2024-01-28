@@ -36,22 +36,6 @@ module.exports = {
         },
       ],
     },
-    {
-      name: 'retired',
-      description: 'Whether or not the user is no longer staff.',
-      required: false,
-      type: ApplicationCommandOptionType.Boolean,
-      choices: [
-        {
-          name: 'True',
-          value: true,
-        },
-        {
-          name: 'False',
-          value: false,
-        },
-      ],
-    },
   ],
   deleted: false,
   // permissionsRequired: [PermissionFlagsBits.Administrator],
@@ -85,18 +69,9 @@ module.exports = {
       hiatus = interaction.options.get('hiatus').value
     }
 
-    let retired
-    if (interaction.options.get('retired') == null) {
-      retired = user.retired
-    }
-    else {
-      retired = interaction.options.get('retired').value
-    }
-
     await user.update({
       websiteUsername: websiteName,
       hiatus: hiatus,
-      retired: retired,
     })
 
     await syncStaffNovelDB(client)

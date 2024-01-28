@@ -38,6 +38,11 @@ User.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    dateRetired: {
+      type: DataTypes.DATEONLY,
+      unique: false,
+      allowNull: true,
+    }
     // numProjects: {
     //   type: DataTypes.INTEGER,
     //   unique: false,

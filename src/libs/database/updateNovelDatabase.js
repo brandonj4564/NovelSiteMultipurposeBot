@@ -1,4 +1,4 @@
-const { Novel, User } = require('./models')
+const { Novel, User, Coin, View, Chapter } = require('./models')
 const syncStaffNovelDB = require('../../handlers/syncStaffNovelDB')
 const notifyNewChapters = require('./notifyNewChapters')
 const { notify } = require('superagent')
@@ -12,18 +12,60 @@ module.exports = async (novelInfo, client, newReleasesChannel) => {
     const title = novel.title
     const translator = novel.translator
     const numChapters = novel.numChapters
+    const chapterInfo = novel.chapterInfo
     const author = novel.author
     const link = novel.link
+    const revenue = novel.revenue // TODO: Create a new revenue and views entry for each novel to track data
+    const views = novel.views
     let original = false
 
     if (author !== null && author == translator) {
       original = true
     }
 
+    // Create records of Coins and Views so you can see your growth
+    trackedRevenue = await new Coin({
+      novelId: id,
+      staff: translator,
+      amount: revenue,
+    }).save()
+
+    trackedViews = await new View({
+      novelId: id,
+      amount: views,
+    }).save()
+
     // Checks if there already is a novel in the db with the same name
     let dbNovel = await Novel.findOne({
       where: { novelId: id },
     })
+
+    const translatorSnowflake = dbNovel?.translatorId || null
+    const editorSnowflake = dbNovel?.editor || null
+
+    for (const chpt of chapterInfo) {
+      // Uploads all chapters into the DB unless they already exist
+      let dbChap = Chapter.findOne({
+        where: {
+          chapterId: chpt.id,
+          novelId: id,
+        }
+      })
+
+      if (!dbChap) {
+        // Chapter doesn't exist in the DB yet, so create it
+        dbChap = await new Chapter({
+          chapterId: chpt.id,
+          novelId: id,
+          title: chpt.name,
+          translatorUsername: translator,
+          translatorId: translatorSnowflake,
+          editor: editorSnowflake,
+          datePosted: new Date(),
+          views: null,
+        }).save()
+      }
+    }
 
     if (!dbNovel) {
       dbNovel = await new Novel({
